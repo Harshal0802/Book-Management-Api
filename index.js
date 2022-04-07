@@ -340,4 +340,82 @@ bookmac.put("/publication/update/book/:isbn", (req, res) => {
     return res.json({books: database.books, publication: database.publications, message: "successfully update publication"});
 });
 
+/* 
+Route           /book/delete
+Description     delete a book
+Access          PUBLIC
+Parameter       isbn
+Method          DELETE
+*/
+
+bookmac.delete("/book/delete/:isbn",(req,res) => {
+    const updatedBookDatabase = database.books.filter(
+        (book) => book.ISBN !== req.params.isbn
+    );
+    database.books = updatedBookDatabase;
+    return res.json({books: database.books});  
+});
+
+/* 
+Route           /book/delete/author
+Description     delete a author from book
+Access          PUBLIC
+Parameter       isbn, authorId
+Method          DELETE
+*/
+
+bookmac.delete("/book/delete/author/:isbn/:authorId",(req,res) => {
+    //update the book database
+    database.books.forEach((book) =>{//for modifing the existing object
+        if(book.ISBN === req.params.isbn){
+            const newAuthorList = book.authors.filter(
+                (author) => author !== parseInt(req.params.authorId)
+            );
+            book.authors = newAuthorList;
+            return;
+        }
+    });
+    //update the author database
+    database.authors.forEach((author) =>{
+        if(author.id === parseInt(req.params.authorId)){
+            const newBooksList = author.books.filter(
+                (book) => book !== req.params.isbn
+            );
+            author.books = newBooksList;
+            return; 
+        }
+    })
+    return res.json({books: database.books, authors: database.authors});
+});
+
+/* 
+Route           /publication/delete/book
+Description     delete a book from publication
+Access          PUBLIC
+Parameter       isbn, pubId
+Method          DELETE
+*/
+
+bookmac.delete("/publication/delete/book/:isbn/:pubId", (req, res) => {
+    //update the publication database
+    database.publications.forEach((publication) =>{
+        if(publication.id === parseInt(req.params.pubId)){
+            const newBooksList = publication.books.filter(
+                (book) => book !== req.params.isbn
+            );
+            publication.books = newBooksList;
+            return; 
+        } 
+    });
+    //update the books Databaseda
+    database.books.forEach((book) => {
+        if(book.ISBN === req.params.isbn){
+            book.publication = 0; //no publication available
+            return;
+        }
+    });
+
+    return res.json({books: database.books, publications: database.publications});
+})
+
 bookmac.listen(3000, () => console.log("server is running"));

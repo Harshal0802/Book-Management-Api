@@ -33,8 +33,8 @@
 //update/add new author => [DONE]
 
 //DELETE
-//delete a book
-//delete a author from book
+//delete a book => [DONE]
+//delete a author from book => [DONE]
 
 //---------------------------------------------------------------------------------------
 
@@ -54,7 +54,7 @@
 //update Author name with id => [DONE]
 
 //DELETE
-//delete author
+//delete an author [task]
 
 //---------------------------------------------------------------------------------------
 
@@ -75,5 +75,5 @@
 //update/add new book to publication => [DONE]
 
 //DELETE
-//delete a book from publication
-//delete publication
+//delete a book from publication => [DONE]
+//delete publication [task] accept an id delete
