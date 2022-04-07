@@ -304,22 +304,40 @@ Method          PUT
 */
 
 bookmac.put("/publication/update/:id", (req, res) => {
-    database.publication.forEach((pub) => {
+    database.publications.forEach((pub) => {
         if(pub.id == req.params.id){
             pub.name = req.body.publicationName;
             return;
         }
     });
-    return res.json({publication: database.publication, message: "publication name was updated"});
+    return res.json({publication: database.publications, message: "publication name was updated"});
 });
 
 /* 
-Route           
-Description     update the name of publication
+Route           /publication/update/book
+Description     update/add new book to publication
 Access          PUBLIC
-Parameter       id
+Parameter       isbn
 Method          PUT
 */
 
+bookmac.put("/publication/update/book/:isbn", (req, res) => {
+    //update the publication database
+    database.publications.forEach((publication) => {
+        if(publication.id == req.body.pubId){
+            return publication.books.push(req.params.isbn);
+        }
+    });
+
+    //update the book Database
+    database.books.forEach((book) => {
+        if(book.ISBN == req.params.isbn){
+            book.publication = req.body.pubId;
+            return;
+        }
+    });
+
+    return res.json({books: database.books, publication: database.publications, message: "successfully update publication"});
+});
 
 bookmac.listen(3000, () => console.log("server is running"));

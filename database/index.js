@@ -34,7 +34,7 @@ const authors = [
     }
 ];
 
-const publication = [
+const publications = [
     {
         id: 1,
         name: "chakra",
@@ -43,8 +43,8 @@ const publication = [
     {
         id: 2,
         name: "tailwind CSS",
-        books: ["1234TWO"],
+        books: [""],
     }
 ];
 
-module.exports = { books, authors, publication };
+module.exports = { books, authors, publications };

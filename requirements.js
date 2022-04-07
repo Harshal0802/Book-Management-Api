@@ -72,7 +72,7 @@
 
 //PUT
 //update publication name with id => [DONE]
-//update/add new book to publication
+//update/add new book to publication => [DONE]
 
 //DELETE
 //delete a book from publication
