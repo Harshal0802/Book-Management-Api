@@ -7,9 +7,9 @@ const mongoose = require("mongoose");
 const database = require("./database/index");
 
 //Models
-const BookModels = require("./database/book");
-const AuthorModels = require("./database/author");
-const PublicaitionModels = require("./database/publication");
+const BookModel = require("./database/book");
+const AuthorModel = require("./database/author");
+const PublicationModel = require("./database/publication");
 
 //Initializing express
 const bookmac = express();
@@ -29,8 +29,9 @@ Description     to get all book
 Access          PUBLIC
 Method          GET
 */
-bookmac.get("/",(req, res) => {
-    return res.json({ books: database.books });
+bookmac.get("/", async (req, res) => {
+    const getAllBooks = await BookModel.find();
+    return res.json(getAllBooks);
 });
 
 /* 
@@ -40,12 +41,14 @@ Access          PUBLIC
 Parameter       isbn
 Method          GET
 */
-bookmac.get("/is/:isbn", ( req, res ) => {
-    const getSpecificBook = database.books.filter(
-        (book) => book.ISBN === req.params.isbn
-    );
+bookmac.get("/is/:isbn", async ( req, res ) => {
+    const getSpecificBook = await BookModel.findOne({ ISBN : req.params.isbn});
 
-    if(getSpecificBook.length === 0){
+    // const getSpecificBook = database.books.filter(
+    //     (book) => book.ISBN === req.params.isbn
+    // );
+
+    if(!getSpecificBook){
         return res.json({ error: `No book found for the ISBN of ${req.params.isbn} `});
     }
     return res.json({ book: getSpecificBook });
@@ -59,12 +62,14 @@ Parameter       category
 Method          GET
 */
 
-bookmac.get("/c/:category", (req, res) => {
-    const getSpecificBooks = database.books.filter(
-        (book) => book.category.includes(req.params.category) //includes is use because there is a array
-    );
+bookmac.get("/c/:category", async ( req, res ) => {
 
-    if(getSpecificBooks.length === 0){
+    const getSpecificBooks = await BookModel.findOne({category: req.params.category});
+    // const getSpecificBooks = database.books.filter(
+    //     (book) => book.category.includes(req.params.category) //includes is use because there is a array
+    // );
+
+    if(!getSpecificBooks){
         return res.json({ error: `No book found for the category of ${req.params.category} `});
     }
     return res.json({ book: getSpecificBooks });
@@ -78,18 +83,18 @@ Parameter       author
 Method          GET
 */
 
-bookmac.get("/autho/:auth", (req, res) => {
-    const getSpecificBooksByAuthor = database.books.filter(
-        (book) => book.authors.includes(`${req.params.auth}`)
-    );
-    
-    console.log("length", getSpecificBooksByAuthor);
+// bookmac.get("/autho/:auth", async (req, res) => {
+//     const getSpecificBooksByAuthor = await 
+//     // const getSpecificBooksByAuthor = database.books.filter(
+//     //     (book) => book.authors.includes(`${req.params.auth}`)
+//     // );
 
-    if(getSpecificBooksByAuthor.length === 0){
-        return res.json({ error: `No book found for the author of ${req.params.auth} `});
-    }
-    return res.json({ book: getSpecificBooksByAuthor });
-});
+
+//     if(getSpecificBooksByAuthor.length === 0){
+//         return res.json({ error: `No book found for the author of ${req.params.auth} `});
+//     }
+//     return res.json({ book: getSpecificBooksByAuthor });
+// });
 
 
 /* 
@@ -100,8 +105,9 @@ Parameter       NONE
 Method          GET
 */
 
-bookmac.get("/author", (req, res) => {
-    return res.json({ authors: database.authors });
+bookmac.get("/author", async (req, res) => {
+    const getAllAuthors = await AuthorModel.find(); //find() are using for all authors
+    return res.json(getAllAuthors);
 });
 
 /* 
@@ -151,8 +157,9 @@ Parameter       NONE
 Method          GET
 */
 
-bookmac.get("/pub", (req, res) => {
-    return res.json({publications: database.publications});
+bookmac.get("/pub", async (req, res) => {
+    const getAllPublication = await PublicationModel.find();
+    return res.json({publications: getAllPublication});
 });
 
 /* 
@@ -202,12 +209,13 @@ Parameter       NONE
 Method          POST
 */
 
-bookmac.post("/book/new", (req, res) => {
+bookmac.post("/book/new", async (req, res) => {
     const { newBook } = req.body;
 
-    database.books.push(newBook);
+    BookModel.create(newBook);
+    // database.books.push(newBook);
 
-    return res.json({ books: database.books, message: "book was added"});
+    // return res.json({ books: database.books, message: "book was added"});
 });
 
 /* 
@@ -221,9 +229,10 @@ Method          POST
 bookmac.post("/author/new", (req,res) => {
     const { newAuthor } = req.body;
 
-    database.authors.push(newAuthor);
+    // database.authors.push(newAuthor);
+    AuthorModel.create(newAuthor);
 
-    return res.json({authors: database.authors, message: "Author was added"});
+    return res.json({message: "Author was added"});
 });
 
 /* 
@@ -237,9 +246,10 @@ Method          POST
 bookmac.post("/publication/new", (req, res) => {
     const { newPublication } = req.body;
 
-    database.publications.push(newPublication);
+    PublicaitionModel.create(newPublication);
+    // database.publications.push(newPublication);
 
-    return res.json({publicaton: database.publications, message: "publication was added"});
+    return res.json({message: "publication was added"});
 });
 
 /* 

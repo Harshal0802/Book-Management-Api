@@ -20,13 +20,13 @@
 //We need an API
 
 //GET
-//to get all books => [Done] 
-//to get specific books => [Done]
-//to get a list of book based on category => [Done]
+//to get all books => [Done] {Database Done}
+//to get specific books => [Done] {Database Done}
+//to get a list of book based on category => [Done] {Database Done}
 //to get a list of book based on author => [DONE]
 
 //POST
-//to post new book => [DONE]
+//to post new book => [DONE] {Database Done}
 
 //PUT
 //update a book details => [DONE]
@@ -43,12 +43,12 @@
 //we need an API
 
 //GET
-//to get all author => [DONE]
+//to get all author => [DONE] {Database Done}
 //to get specific author => [DONE]
 //to get list of author based on a book => [DONE]
 
 //POST
-//new author => [DONE]
+//new author => [DONE] {Database Done}
 
 //PUT
 //update Author name with id => [DONE]
@@ -63,12 +63,12 @@
 //we need an API
 
 //GET
-//to get all publications => [DONE]
+//to get all publications => [DONE] {Database Done}
 //to get specific publications => [DONE] 
 //to get list of publications based on a book => [DONE]
 
 //POST
-//add new publication => [DONE]
+//add new publication => [DONE] {Database Done}
 
 //PUT
 //update publication name with id => [DONE]
