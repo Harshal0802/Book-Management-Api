@@ -1,5 +1,7 @@
+require("dotenv").config();
 //Framework
 const express = require("express");
+const mongoose = require("mongoose");
 
 //Database
 const database = require("./database/index");
@@ -10,6 +12,12 @@ const bookmac = express();
 //configurations
 bookmac.use(express.json());
 
+//Establish Database Connection
+mongoose
+    .connect(process.env.MONGO_URL,
+)
+.then(() => console.log("connection establish"));
+ 
 /*
 Route           /
 Description     to get all book
@@ -59,25 +67,21 @@ bookmac.get("/c/:category", (req, res) => {
 
 /* 
 Route           /a
-Description     to get a list of book based on author
+Description     to get a list of book based on author 
 Access          PUBLIC
 Parameter       author
 Method          GET
 */
 
-bookmac.get("/a/:author", (req, res) => {
+bookmac.get("/autho/:auth", (req, res) => {
     const getSpecificBooksByAuthor = database.books.filter(
-        (book) => {
-            console.log("author id = ", book.authors);
-            console.log("url author", req.params.author);
-            return book.authors.includes(req.params.author)
-        }
+        (book) => book.authors.includes(`${req.params.auth}`)
     );
-
+    
     console.log("length", getSpecificBooksByAuthor);
 
     if(getSpecificBooksByAuthor.length === 0){
-        return res.json({ error: `No book found for the author of ${req.params.author} `});
+        return res.json({ error: `No book found for the author of ${req.params.auth} `});
     }
     return res.json({ book: getSpecificBooksByAuthor });
 });
@@ -92,7 +96,7 @@ Method          GET
 */
 
 bookmac.get("/author", (req, res) => {
-    return res.json({ authors: database.author });
+    return res.json({ authors: database.authors });
 });
 
 /* 
@@ -143,7 +147,7 @@ Method          GET
 */
 
 bookmac.get("/pub", (req, res) => {
-    return res.json({publications: database.publication});
+    return res.json({publications: database.publications});
 });
 
 /* 
@@ -155,7 +159,7 @@ Method          GET
 */
 
 bookmac.get("/pub/:id", (req, res) => {
-    const getSpecificPublication = database.publication.filter(
+    const getSpecificPublication = database.publications.filter(
         (pub) => pub.id == req.params.id
     );
 
@@ -174,7 +178,7 @@ Method          GET
 */
 
 bookmac.get("/publication/:isbn", (req, res) => {
-    const getPublicationList = database.publication.filter(
+    const getPublicationList = database.publications.filter(
         (book) => book.books.includes(req.params.isbn)
     );
     
@@ -228,9 +232,9 @@ Method          POST
 bookmac.post("/publication/new", (req, res) => {
     const { newPublication } = req.body;
 
-    database.publication.push(newPublication);
+    database.publications.push(newPublication);
 
-    return res.json({publicaton: database.publication, message: "publication was added"});
+    return res.json({publicaton: database.publications, message: "publication was added"});
 });
 
 /* 
@@ -416,6 +420,39 @@ bookmac.delete("/publication/delete/book/:isbn/:pubId", (req, res) => {
     });
 
     return res.json({books: database.books, publications: database.publications});
+})
+
+/* 
+Route           /author/delete
+Description     delete an author by authorId
+Access          PUBLIC
+Parameter       authorid
+Method          DELETE
+*/
+
+bookmac.delete("/author/delete/:authorid", (req, res) => {
+    const updateAuthorDatabase = database.authors.filter(
+        (author) => author.id !== parseInt(req.params.authorid)
+    );
+    database.authors = updateAuthorDatabase;
+
+    return res.json({authors: database.authors});
+})
+
+/* 
+Route           /publication/delete
+Description     delete an publication by publicationId
+Access          PUBLIC
+Parameter       publicationID
+Method          DELETE
+*/
+
+bookmac.delete("/publication/delete/:pubId", (req, res) => {
+    const updatePublicationDatabase = database.publications.filter(
+        (publication) => publication.id !== parseInt(req.params.pubId)
+    )
+    database.publications = updatePublicationDatabase;
+    return res.json({ publications : database.publications });
 })
 
 bookmac.listen(3000, () => console.log("server is running"));

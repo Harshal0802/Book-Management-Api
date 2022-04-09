@@ -23,7 +23,7 @@
 //to get all books => [Done] 
 //to get specific books => [Done]
 //to get a list of book based on category => [Done]
-//to get a list of book based on author => [NOT WORKING]
+//to get a list of book based on author => [DONE]
 
 //POST
 //to post new book => [DONE]
@@ -54,7 +54,7 @@
 //update Author name with id => [DONE]
 
 //DELETE
-//delete an author [task]
+//delete an author [DONE]
 
 //---------------------------------------------------------------------------------------
 
@@ -76,4 +76,4 @@
 
 //DELETE
 //delete a book from publication => [DONE]
-//delete publication [task] accept an id delete
+//delete publication => [DONE]
