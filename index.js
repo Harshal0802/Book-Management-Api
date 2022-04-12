@@ -294,22 +294,48 @@ Parameter       isbn
 Method          PUT
 */
 
-bookmac.put("/book/author/update/:isbn",(req,res) => {
+bookmac.put("/book/author/update/:isbn", async (req,res) => {
     //update the book Database
-    database.books.forEach((book) => {
-        if(book.ISBN == req.params.isbn){
-            return book.authors.push(req.body.newAuthor);
+    const updatedBooks = await BookModel.findOneAndUpdate(
+        {
+            ISBN: req.params.isbn,
+        },
+        {
+            $addToSet: {
+                authors: req.body.newAuthor,
+            },
+        },
+        {
+            new: true,
         }
-    });
+    );
+    // database.books.forEach((book) => {
+    //     if(book.ISBN == req.params.isbn){
+    //         return book.authors.push(req.body.newAuthor);
+    //     }
+    // });
 
     //update the author database
-    database.authors.forEach((author)=>{
-        if(author.id == req.body.newAuthor){
-            return author.books.push(req.params.isbn);
+    const updatedAuthor = await AuthorModel.findOneAndUpdate(
+        {
+            id: req.body.newAuthor,
+        },
+        {
+            $addToSet: {
+                books: req.params.isbn,
+            }
+        },
+        {
+            new: true,
         }
-    });
+    );
+    // database.authors.forEach((author)=>{
+    //     if(author.id == req.body.newAuthor){
+    //         return author.books.push(req.params.isbn);
+    //     }
+    // });
 
-    return res.json({books: database.books, author: database.authors, message: "new author was added"});
+    return res.json({books: updatedBooks, author: updatedAuthor, message: "new author was added"});
 });
 
 /* 
@@ -384,9 +410,9 @@ Method          DELETE
 */
 
 bookmac.delete("/book/delete/:isbn",(req,res) => {
-    const updatedBookDatabase = database.books.filter(
-        (book) => book.ISBN !== req.params.isbn
-    );
+    // const updatedBookDatabase = database.books.filter(
+    //     (book) => book.ISBN !== req.params.isbn
+    // );
     database.books = updatedBookDatabase;
     return res.json({books: database.books});  
 });

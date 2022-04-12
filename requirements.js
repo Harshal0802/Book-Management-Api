@@ -30,7 +30,7 @@
 
 //PUT
 //update a book details => [DONE] {Database Done}
-//update/add new author => [DONE]
+//update/add new author => [DONE]   {Database Done}
 
 //DELETE
 //delete a book => [DONE]
