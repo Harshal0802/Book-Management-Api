@@ -23,7 +23,7 @@
 //to get all books => [Done] {Database Done}
 //to get specific books => [Done] {Database Done}
 //to get a list of book based on category => [Done] {Database Done}
-//to get a list of book based on author => [DONE]
+//to get a list of book based on author => [DONE] {Database Done}
 
 //POST
 //to post new book => [DONE] {Database Done}
@@ -33,8 +33,8 @@
 //update/add new author => [DONE]   {Database Done}
 
 //DELETE
-//delete a book => [DONE]
-//delete a author from book => [DONE]
+//delete a book => [DONE] {Database Done}
+//delete a author from book => [DONE] {Database Done}
 
 //---------------------------------------------------------------------------------------
 
@@ -51,7 +51,7 @@
 //new author => [DONE] {Database Done}
 
 //PUT
-//update Author name with id => [DONE]
+//update Author name with id => [DONE] {Database Done}
 
 //DELETE
 //delete an author [DONE]
@@ -71,9 +71,9 @@
 //add new publication => [DONE] {Database Done}
 
 //PUT
-//update publication name with id => [DONE]
-//update/add new book to publication => [DONE]
+//update publication name with id => [DONE] {Database Done}
+//update/add new book to publication => [DONE] {Database Done}
 
 //DELETE
-//delete a book from publication => [DONE]
+//delete a book from publication => [DONE] {Database Done}
 //delete publication => [DONE]
