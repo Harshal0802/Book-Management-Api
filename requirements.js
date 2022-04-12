@@ -26,7 +26,7 @@
 //to get a list of book based on author => [DONE] {Database Done}
 
 //POST
-//to post new book => [DONE] {Database Done}
+//to add new book => [DONE] {Database Done}
 
 //PUT
 //update a book details => [DONE] {Database Done}
