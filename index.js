@@ -63,7 +63,6 @@ Method          GET
 */
 
 bookmac.get("/c/:category", async ( req, res ) => {
-
     const getSpecificBooks = await BookModel.findOne({category: req.params.category});
     // const getSpecificBooks = database.books.filter(
     //     (book) => book.category.includes(req.params.category) //includes is use because there is a array
@@ -118,12 +117,13 @@ Parameter       id
 Method          GET
 */
 
-bookmac.get("/aut/:authorid", ( req, res ) => {
-    const getSpecificAuthor = database.authors.filter(
-        (author) => author.id === parseInt(req.params.authorid)
-    );
+bookmac.get("/aut/:authorid", async ( req, res ) => {
+    const getSpecificAuthor = await AuthorModel.findOne({author: req.params.authorid});
+    // const getSpecificAuthor = database.authors.filter(
+    //     (author) => author.id === parseInt(req.params.authorid)
+    // );
 
-    if(getSpecificAuthor.length === 0){
+    if(!getSpecificAuthor){
         return res.json({ error: `No book found for the Author_id of ${req.params.authorid} `});
     }
     return res.json({ book: getSpecificAuthor });
@@ -137,12 +137,13 @@ Parameter       isbn
 Method          GET
 */
 
-bookmac.get("/author/:isbn", (req, res) => {
-    const getSpecificAuthors = database.authors.filter(
-        (author) => author.books.includes(req.params.isbn)
-    );
+bookmac.get("/author/:isbn", async (req, res) => {
+    const getSpecificAuthors = await AuthorModel.find({author: req.params.isbn});
+    // const getSpecificAuthors = database.authors.filter(
+    //     (author) => author.books.includes(req.params.isbn)
+    // );
 
-    if(getSpecificAuthors.length === 0){
+    if(!getSpecificAuthors){
         return res.json({error: `No author found for the book ${req.params.isbn}`});
     }
 
@@ -170,12 +171,13 @@ Parameter       id
 Method          GET
 */
 
-bookmac.get("/pub/:id", (req, res) => {
-    const getSpecificPublication = database.publications.filter(
-        (pub) => pub.id == req.params.id
-    );
+bookmac.get("/pub/:id", async (req, res) => {
+    const getSpecificPublication = await PublicationModel.findOne({ Publication: req.params.id });
+    // const getSpecificPublication = database.publications.filter(
+    //     (pub) => pub.id == req.params.id
+    // );
 
-    if(getSpecificPublication.length === 0){
+    if(!getSpecificPublication){
         return res.json({error: `No Publcation found of the pub_id ${req.params.id}`});
     }
     return res.json({publication: getSpecificPublication});
@@ -189,12 +191,13 @@ Parameter       isbn
 Method          GET
 */
 
-bookmac.get("/publication/:isbn", (req, res) => {
-    const getPublicationList = database.publications.filter(
-        (book) => book.books.includes(req.params.isbn)
-    );
+bookmac.get("/publication/:isbn", async (req, res) => {
+    const getPublicationList = await PublicationModel.find({ publicaton: req.params.isbn});
+    // const getPublicationList = database.publications.filter(
+    //     (book) => book.books.includes(req.params.isbn)
+    // );
     
-    if(getPublicationList.length === 0){
+    if(!getPublicationList){
         return res.json({error: `No Publication found for the book's ISBN ${req.params.isbn}`});
     }
 
@@ -203,7 +206,7 @@ bookmac.get("/publication/:isbn", (req, res) => {
 
 /* 
 Route           /book/new
-Description     to post new book
+Description     to add new book
 Access          PUBLIC
 Parameter       NONE
 Method          POST
@@ -220,7 +223,7 @@ bookmac.post("/book/new", async (req, res) => {
 
 /* 
 Route           /author/new
-Description     to post new author
+Description     to add new author
 Access          PUBLIC
 Parameter       NONE
 Method          POST
@@ -246,7 +249,7 @@ Method          POST
 bookmac.post("/publication/new", (req, res) => {
     const { newPublication } = req.body;
 
-    PublicaitionModel.create(newPublication);
+    PublicationModel.create(newPublication);
     // database.publications.push(newPublication);
 
     return res.json({message: "publication was added"});
@@ -260,14 +263,27 @@ Parameter       title
 Method          PUT
 */
 
-bookmac.put("/book/update/:isbn", (req, res) => {
-    database.books.forEach((book) => {
-        if(book.ISBN == req.params.isbn){
-            book.title = req.body.bookTitle;
-            return;
+bookmac.put("/book/update/:isbn", async (req, res) => {
+    const updatedBook = await BookModel.findOneAndUpdate(
+        {
+            ISBN: req.params.isbn, //to find the specific book by isbn
+        },
+        {
+            title: req.body.bookTitle, //to update the data
+        },
+        {
+            new: true,  //without this property mongodb return old value to get updated value we need to use new: true property        
         }
-    });
-    return res.json({books: database.books});
+    );
+
+
+    // database.books.forEach((book) => {
+    //     if(book.ISBN == req.params.isbn){
+    //         book.title = req.body.bookTitle;
+    //         return;
+    //     }
+    // });
+    return res.json({books:updatedBook });
 });
 
 /* 
