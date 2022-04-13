@@ -13,8 +13,12 @@ Method          GET
 */
 
 Router.get("/", async (req, res) => {
-    const getAllPublication = await PublicationModel.find();
-    return res.json({publications: getAllPublication});
+    try {
+        const getAllPublication = await PublicationModel.find();
+        return res.json({publications: getAllPublication});
+    } catch (error) {
+        return res.json({error: error.message});
+    }
 });
 
 /* 
@@ -26,15 +30,18 @@ Method          GET
 */
 
 Router.get("/:id", async (req, res) => {
-    const getSpecificPublication = await PublicationModel.findOne({ Publication: req.params.id });
-    // const getSpecificPublication = database.publications.filter(
-    //     (pub) => pub.id == req.params.id
-    // );
-
-    if(!getSpecificPublication){
-        return res.json({error: `No Publcation found of the pub_id ${req.params.id}`});
+    try {
+        const getSpecificPublication = await PublicationModel.findOne({ Publication: req.params.id });
+        // const getSpecificPublication = database.publications.filter(
+        //     (pub) => pub.id == req.params.id
+        // );
+        if(!getSpecificPublication){
+            return res.json({error: `No Publcation found of the pub_id ${req.params.id}`});
+        }
+        return res.json({publication: getSpecificPublication});
+    } catch (error) {
+        return res.json({error: error.message});
     }
-    return res.json({publication: getSpecificPublication});
 })
 
 /* 
@@ -46,16 +53,20 @@ Method          GET
 */
 
 Router.get("/:isbn", async (req, res) => {
-    const getPublicationList = await PublicationModel.find({ publicaton: req.params.isbn});
-    // const getPublicationList = database.publications.filter(
-    //     (book) => book.books.includes(req.params.isbn)
-    // );
+    try {
+        const getPublicationList = await PublicationModel.find({ publicaton: req.params.isbn});
+        // const getPublicationList = database.publications.filter(
+        //     (book) => book.books.includes(req.params.isbn)
+        // );
+        
+        if(!getPublicationList){
+            return res.json({error: `No Publication found for the book's ISBN ${req.params.isbn}`});
+        }
     
-    if(!getPublicationList){
-        return res.json({error: `No Publication found for the book's ISBN ${req.params.isbn}`});
+        return res.json({publication: getPublicationList});
+    } catch (error) {
+        return res.json({error: error.message});
     }
-
-    return res.json({publication: getPublicationList});
 })
 
 /* 
@@ -67,12 +78,16 @@ Method          POST
 */
 
 Router.post("/new", (req, res) => {
-    const { newPublication } = req.body;
+    try {
+        const { newPublication } = req.body;
 
-    PublicationModel.create(newPublication);
-    // database.publications.push(newPublication);
-
-    return res.json({message: "publication was added"});
+        PublicationModel.create(newPublication);
+        // database.publications.push(newPublication);
+    
+        return res.json({message: "publication was added"});
+    } catch (error) {
+        return res.json({ error: error.message});
+    }
 });
 
 /* 
@@ -84,47 +99,55 @@ Method          PUT
 */
 
 Router.put("/update/book/:isbn", async (req, res) => {
-    //update the publication database
+    try {
+            //update the publication database
     const updatedPublication = await PublicationModel.findOneAndUpdate(
-      {
-         id: req.body.pubId,
-      },
-      {
-          $push: {
-            books: req.params.isbn,
-          },
-      },
-      {
-          new: true,
-      }
-    );
-
-    // database.publications.forEach((publication) => {
-    //     if(publication.id == req.body.pubId){
-    //         return publication.books.push(req.params.isbn);
-    //     }
-    // });
-
-    //update the book Database
-    const updatedBookData = await BookModel.findOneAndUpdate(
         {
-            ISBN: req.params.isbn,
+           id: req.body.pubId,
         },
         {
-            publication : req.body.pubId,
+            $push: {
+              books: req.params.isbn,
+            },
         },
         {
             new: true,
         }
-    )
-    // database.books.forEach((book) => {
-    //     if(book.ISBN == req.params.isbn){
-    //         book.publication = req.body.pubId;
-    //         return;
-    //     }
-    // });
-
-    return res.json({books: updatedBookData, publication: updatedPublication, message: "successfully update publication"});
+      );
+  
+      // database.publications.forEach((publication) => {
+      //     if(publication.id == req.body.pubId){
+      //         return publication.books.push(req.params.isbn);
+      //     }
+      // });
+  
+      //update the book Database
+      const updatedBookData = await BookModel.findOneAndUpdate(
+          {
+              ISBN: req.params.isbn,
+          },
+          {
+              publication : req.body.pubId,
+          },
+          {
+              new: true,
+          }
+      )
+      // database.books.forEach((book) => {
+      //     if(book.ISBN == req.params.isbn){
+      //         book.publication = req.body.pubId;
+      //         return;
+      //     }
+      // });
+  
+      return res.json({ 
+              books: updatedBookData, 
+              publication: updatedPublication, 
+              message: "successfully update publication"
+      });
+    } catch (error) {
+      return res.json({error: error.message});  
+    }
 });
 
 /* 
@@ -136,22 +159,26 @@ Method          PUT
 */
 
 Router.put("/update/:id", async (req, res) => {
-    const updatePublicationName = await PublicationModel.findOneAndUpdate({
-        id: req.params.id,
-    },
-    {
-        name : req.body.newName,
-    },
-    {
-        new: true,
-    });
-    // database.publications.forEach((pub) => {
-    //     if(pub.id == req.params.id){
-    //         pub.name = req.body.publicationName;
-    //         return;
-    //     }
-    // });
-    return res.json({publication: updatePublicationName, message: "publication name was updated"});
+    try {
+        const updatePublicationName = await PublicationModel.findOneAndUpdate({
+            id: req.params.id,
+        },
+        {
+            name : req.body.newName,
+        },
+        {
+            new: true,
+        });
+        // database.publications.forEach((pub) => {
+        //     if(pub.id == req.params.id){
+        //         pub.name = req.body.publicationName;
+        //         return;
+        //     }
+        // });
+        return res.json({publication: updatePublicationName, message: "publication name was updated"});
+    } catch (error) {
+        return res.json({error: error.message});
+    }
 });
 
 /* 
@@ -163,8 +190,9 @@ Method          DELETE
 */
 
 Router.delete("/delete/book/:isbn/:pubId", async (req, res) => {
-    //update the publication database
-    const updatedPublicationByISBN = await PublicationModel.findOneAndUpdate(
+    try {
+            //update the publication database
+        const updatedPublicationByISBN = await PublicationModel.findOneAndUpdate(
         {
             id: req.params.pubId,
         },
@@ -176,7 +204,7 @@ Router.delete("/delete/book/:isbn/:pubId", async (req, res) => {
         {
             new: true,
         }
-    )
+    );
     // database.publications.forEach((publication) =>{
     //     if(publication.id === parseInt(req.params.pubId)){
     //         const newBooksList = publication.books.filter(
@@ -187,8 +215,8 @@ Router.delete("/delete/book/:isbn/:pubId", async (req, res) => {
     //     } 
     // });
 
-    //update the books Database
-    const updatedBookData = await BookModel.findOneAndUpdate(
+        //update the books Database
+        const updatedBookData = await BookModel.findOneAndUpdate(
         {
             ISBN: req.params.isbn,
         },
@@ -198,7 +226,7 @@ Router.delete("/delete/book/:isbn/:pubId", async (req, res) => {
         {
             new: true,
         }
-    )
+    );
 
     // database.books.forEach((book) => {
     //     if(book.ISBN === req.params.isbn){
@@ -207,7 +235,10 @@ Router.delete("/delete/book/:isbn/:pubId", async (req, res) => {
     //     }
     // });
 
-    return res.json({books: updatedBookData, publications: updatedPublicationByISBN});
+        return res.json({books: updatedBookData, publications: updatedPublicationByISBN});
+    } catch (error) {
+        return res.json({error: error.message});
+    }
 });
 
 /* 
@@ -219,15 +250,18 @@ Method          DELETE
 */
 
 Router.delete("/delete/:pubId", async (req, res) => {
-    const deletePuvblication = await PublicationModel.findOneAndDelete({
-        id: req.params.pubId,
-    })
-    // const updatePublicationDatabase = database.publications.filter(
-    //     (publication) => publication.id !== parseInt(req.params.pubId)
-    // )
-    // database.publications = updatePublicationDatabase;
-    return res.json({ publications : deletePuvblication });
+    try {
+        const deletePuvblication = await PublicationModel.findOneAndDelete({
+            id: req.params.pubId,
+        });
+        // const updatePublicationDatabase = database.publications.filter(
+        //     (publication) => publication.id !== parseInt(req.params.pubId)
+        // )
+        // database.publications = updatePublicationDatabase;
+        return res.json({ publications : deletePuvblication });
+    } catch (error) {
+        return res.json({ error: error.message });
+    }
 })
-
 
 module.exports = Router;
