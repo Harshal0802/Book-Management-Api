@@ -6,4 +6,4 @@ package-lock.json
 
 .env
 
-database/index.js
+/database/index.js
